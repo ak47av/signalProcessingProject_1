@@ -14,15 +14,15 @@ plt.plot(t,y)
 
 freqs = fftfreq(N)
 mask = freqs > 0
-fft_vals = np.asarray(fft(y))
-actual_fft = 2.0*np.abs(fft_vals/N)
+fft_vals = np.asarray(fft(y))  #this will contain mirror images of the fourier transform 
+actual_fft = 2.0*np.abs(fft_vals/N)  #plots only half the values of the fft since the other half is not needed
 FFT = actual_fft
 
 plt.subplot(312)
 plt.plot(fft_vals)
 
 plt.subplot(313)
-plt.plot(ifft(fft_vals))
+plt.plot(ifft(fft_vals))  #ifft requires a mirror image input to work, it won't work on corrected input as in actual_fft, but only on fft_vals
 
 print(ifft(fft_vals))
 
@@ -35,7 +35,7 @@ def step(f):
     low_filter[ind] = 1
     low_filter[ind2]= 1
 
-    return low_filter
+    return low_filter #the actual filter is from 0 to 50, and the rest is 0; the domain exists only until 500
 
 low_filter = step(f)
 plt.figure(2)
