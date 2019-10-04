@@ -6,13 +6,13 @@ from plotly.subplots import make_subplots
 
 py.offline.init_notebook_mode(connected = True)
 
-from numpy.fft import fft,ifft,fftfreq,irfft,rfftfreq
+from numpy.fft import fft,ifft,fftfreq
 
 Fs = 1000
 x = np.linspace(0,1,Fs)
 
 def update_plot(freq,freq1,freq2,freq3):
-    fig = make_subplots(rows=4,cols=1)
+    fig = make_subplots(rows=3,cols=1)
     
     f = np.arange(0,1000)
     
@@ -28,7 +28,7 @@ def update_plot(freq,freq1,freq2,freq3):
         x=x,
         y=sig,
         mode='lines',
-        name='sines', 
+        name='message wave', 
         line=dict(
             shape='spline'
         )
@@ -39,8 +39,8 @@ def update_plot(freq,freq1,freq2,freq3):
     
     filter_low = np.asarray(step(f)) 
     
-    trace2 = go.Scatter(
-        x=freqs[mask],
+    trace3 = go.Scatter(
+        x=f[mask],
         y=filter_low[mask],
         mode='lines',
         name='filter',
@@ -51,7 +51,7 @@ def update_plot(freq,freq1,freq2,freq3):
     
     out = np.real(ifft(filter_low*np.asarray((fft(sig)))))
     
-    trace3 = go.Scatter(
+    trace2 = go.Scatter(
         x=x,
         y=out,
         mode='lines',
@@ -68,8 +68,9 @@ def update_plot(freq,freq1,freq2,freq3):
     fig.update_layout()
     py.offline.iplot(fig)
     
-freq =  widgets.FloatSlider(min=275, max=480, value=1, description='Filter width')   
+freq =  widgets.FloatSlider(min=275, max=480, value=1, description='Threshold')   
 freq1 = widgets.FloatSlider(min=0, max=450, value=1, description='freq1')
 freq2 = widgets.FloatSlider(min=0, max=450, value=1, description='freq2')
 freq3 = widgets.FloatSlider(min=0, max=450, value=1, description='freq3')
 widgets.interactive(update_plot,freq=freq,freq1=freq1,freq2=freq2,freq3=freq3)
+
