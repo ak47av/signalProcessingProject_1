@@ -6,13 +6,13 @@ from plotly.subplots import make_subplots
 
 py.offline.init_notebook_mode(connected = True)
 
-from numpy.fft import fft,ifft,fftfreq,irfft,rfftfreq
+from numpy.fft import fft,ifft,fftfreq
 
 Fs = 1000
 x = np.linspace(0,1,Fs)
 
 def update_plot(low_freq,high_freq,freq1,freq2,freq3):
-    fig = make_subplots(rows=4,cols=1)
+    fig = make_subplots(rows=3,cols=1)
     
     f = np.arange(0,1000)
     
@@ -30,7 +30,7 @@ def update_plot(low_freq,high_freq,freq1,freq2,freq3):
         x=x,
         y=sig,
         mode='lines',
-        name='sines', 
+        name='message wave', 
         line=dict(
             shape='spline'
         )
@@ -41,8 +41,8 @@ def update_plot(low_freq,high_freq,freq1,freq2,freq3):
     
     filter_low = np.asarray(step(f)) 
     
-    trace2 = go.Scatter(
-        x=freqs[mask],
+    trace3 = go.Scatter(
+        x=f[mask],
         y=filter_low[mask],
         mode='lines',
         name='filter',
@@ -53,7 +53,7 @@ def update_plot(low_freq,high_freq,freq1,freq2,freq3):
     
     out = np.real(ifft(filter_low*np.asarray((fft(sig)))))
     
-    trace3 = go.Scatter(
+    trace2 = go.Scatter(
         x=x,
         y=out,
         mode='lines',
@@ -64,25 +64,15 @@ def update_plot(low_freq,high_freq,freq1,freq2,freq3):
     )
     
     
-    trace4 = go.Scatter(
-        x=f,
-        y=step(f),
-        mode='lines',
-        name='filtered signal',
-        line = dict(
-            shape ='spline'
-        )
-    )
     
     fig.add_trace(trace1,row=1,col=1)
     fig.add_trace(trace2,row=2,col=1)
     fig.add_trace(trace3,row=3,col=1)
-    fig.add_trace(trace4,row=4,col=1)
     fig.update_layout()
     py.offline.iplot(fig)
     
-low_freq =  widgets.FloatSlider(min=100, max=249, value=1, description='Low Limit')   
-high_freq =  widgets.FloatSlider(min=250, max=400, value=1, description='High Limit')   
+low_freq =  widgets.FloatSlider(min=100, max=249, value=1, description='Lower Limit')   
+high_freq =  widgets.FloatSlider(min=250, max=400, value=1, description='Higher Limit')   
 freq1 = widgets.FloatSlider(min=0, max=450, value=1, description='freq1')
 freq2 = widgets.FloatSlider(min=0, max=450, value=1, description='freq2')
 freq3 = widgets.FloatSlider(min=0, max=450, value=1, description='freq3')
