@@ -1,0 +1,88 @@
+import numpy as np
+import plotly as py
+import plotly.graph_objs as go
+import ipywidgets as widgets
+from plotly.subplots import make_subplots 
+
+py.offline.init_notebook_mode(connected = True)
+
+from numpy.fft import fft,ifft,fftfreq,irfft,rfftfreq
+
+Fs = 1000
+x = np.linspace(0,1,Fs)
+
+def update_plot(freq,freq1,freq2,freq3):
+    fig = make_subplots(rows=4,cols=1)
+    
+    f = np.arange(0,1000)
+    
+    def step(f):
+        low_filter = np.zeros(len(f))
+        ind = np.where((f<freq))
+        ind2 = np.where((f>1000-freq))
+        low_filter[ind] = 1
+        low_filter[ind2]= 1
+        return low_filter
+    
+    sig = np.sin(2*np.pi*freq1*x) + np.cos(2*np.pi*freq2*x) + np.sin(2*np.pi*freq3*x)
+    
+    trace1 = go.Scatter(
+        x=x,
+        y=sig,
+        mode='lines',
+        name='sines', 
+        line=dict(
+            shape='spline'
+        )
+    )
+    
+    freqs = fftfreq(Fs)
+    mask = freqs>0
+    
+    filter_low = np.asarray(step(f)) 
+    
+    trace2 = go.Scatter(
+        x=freqs[mask],
+        y=filter_low[mask],
+        mode='lines',
+        name='filter',
+        line = dict(
+            shape ='spline'
+        )
+    )
+    
+    out = np.real(ifft(filter_low*np.asarray((fft(sig)))))
+    
+    trace3 = go.Scatter(
+        x=x,
+        y=out,
+        mode='lines',
+        name='filtered signal',
+        line = dict(
+            shape ='spline'
+        )
+    )
+    
+    
+    trace4 = go.Scatter(
+        x=f,
+        y=step(f),
+        mode='lines',
+        name='filtered signal',
+        line = dict(
+            shape ='spline'
+        )
+    )
+    
+    fig.add_trace(trace1,row=1,col=1)
+    fig.add_trace(trace2,row=2,col=1)
+    fig.add_trace(trace3,row=3,col=1)
+    fig.add_trace(trace4,row=4,col=1)
+    fig.update_layout()
+    py.offline.iplot(fig)
+    
+freq =  widgets.FloatSlider(min=25, max=200, value=1, description='Filter width')   
+freq1 = widgets.FloatSlider(min=0, max=100, value=1, description='freq1')
+freq2 = widgets.FloatSlider(min=0, max=100, value=1, description='freq2')
+freq3 = widgets.FloatSlider(min=0, max=100, value=1, description='freq3')
+widgets.interactive(update_plot,freq=freq,freq1=freq1,freq2=freq2,freq3=freq3)
