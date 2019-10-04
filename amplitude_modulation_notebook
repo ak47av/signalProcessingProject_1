@@ -9,13 +9,13 @@ from plotly.subplots import make_subplots
 Fs = 1000
 t=np.linspace(0,1,Fs)
 
-def update_plot(freq1,freq2):
+def update_plot(freq1,freq2,amp1,amp2):
     fig = make_subplots(rows=4,cols=1)   
     Fs=1000    
     
     t=np.linspace(0,1,Fs)
-    M=1*np.sin(2*np.pi*freq1*t)            #Message Wave
-    C=2*np.sin(2*np.pi*freq2*t)             #Carrier Wave
+    M=amp1*np.sin(2*np.pi*freq1*t)            #Message Wave
+    C=amp2*np.sin(2*np.pi*freq2*t)             #Carrier Wave
 
     F=1*np.cos(((2*np.pi*freq2 )-(2*np.pi*freq1))*t)/2    
     G=1*np.cos(((2*np.pi*freq2 )+(2*np.pi*freq1))*t)/2      
@@ -80,6 +80,8 @@ def update_plot(freq1,freq2):
     py.offline.iplot(fig)
  
 freq1 = widgets.FloatSlider(min=0, max=50, value=1, description='Freq1')
-freq2 = widgets.FloatSlider(min=0, max=100, value=100, description='Carrier Frequency')
+freq2 = widgets.FloatSlider(min=75, max=150, value=100, description='Carrier Frequency')
+amp1 = widgets.FloatSlider(min=1,max=5,value=1,description="Message Amplitude")
+amp2 = widgets.FloatSlider(min=1,max=3,value=1,description="Carrier Amplitude")
 
-widgets.interactive(update_plot,freq1=freq1,freq2=freq2)
+widgets.interactive(update_plot,freq1=freq1,freq2=freq2,amp1=amp1,amp2=amp2)
